@@ -18,17 +18,22 @@ export default function PaymentList({ userId }: { userId: number }) {
     const token = getAccessToken();
     if (!token) return;
 
-    fetch(`http://3.76.183.255:3030/api/payment-schedule/buyer/${userId}`, {
+    fetch(`/api/payments/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to fetch payments: ${res.status}`);
-        return res.json();
+      .then(async (res) => {
+        const ct = res.headers.get("content-type") || "";
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          throw new Error(text || `Failed to fetch payments: ${res.status}`);
+        }
+        return ct.includes("application/json") ? res.json() : res.text();
       })
-      .then((data) => setPayments(data))
+      .then((data) => setPayments(Array.isArray(data) ? data : data?.data || []))
       .catch((err) => console.error("Payment fetch error:", err))
       .finally(() => setLoading(false));
   }, [userId, getAccessToken]);

@@ -37,9 +37,15 @@ export default function CheckoutButton({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items, total, locale, user }),
       });
-      const data = await res.json();
-      if (!res.ok || !data?.ok) {
-        setResult({ ok: false, message: data?.error || 'Failed to send order' });
+      const ct = res.headers.get('content-type') || '';
+      let data: any = null;
+      try {
+        data = ct.includes('application/json') ? await res.json() : await res.text();
+      } catch (_) {
+      }
+      if (!res.ok || (typeof data === 'object' && data && data.ok === false)) {
+        const msg = typeof data === 'string' ? data : data?.error || `Failed to send order (${res.status})`;
+        setResult({ ok: false, message: msg });
       } else {
         setResult({ ok: true, message: 'Your order has been sent to the admin via Telegram.' });
       }

@@ -74,7 +74,6 @@ const getToken = (): string | null => {
 export const useCartStore = create<CartStore>((set, get) => ({
   cart: [],
 
-  // 🔹 Backenddan cartni olish
   fetchCart: async () => {
     try {
       const token = getToken();
@@ -90,7 +89,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  // 🔹 Cartga qo‘shish
   addToCart: async (item) => {
     try {
       const token = getToken();
@@ -114,7 +112,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  // 🔹 Cartdan o‘chirish
   removeFromCart: async (id) => {
     try {
       const token = getToken();
@@ -136,7 +133,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  // 🔹 Cartni tozalash
   clearCart: async () => {
     try {
       const token = getToken();
@@ -158,7 +154,6 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }
   },
 
-  // 🔹 Cart narxini hisoblash
   getTotalPrice: (): number => {
     return get().cart.reduce<number>((total, item) => {
       const price = parseFloat(item.device.base_price) || 0;
@@ -166,6 +161,5 @@ export const useCartStore = create<CartStore>((set, get) => ({
     }, 0);
   },
 
-  // 🔹 Cartdagi elementlar soni
   getItemCount: (): number => get().cart.length,
 }));
